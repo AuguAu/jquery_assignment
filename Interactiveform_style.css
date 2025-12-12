@@ -1,0 +1,12 @@
+/* คลาสสำหรับข้อความ Error (สีแดง) */
+.error-text {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 3px;
+    display: none; /* ซ่อนไว้ก่อน จะแสดงเมื่อ JS สั่ง */
+}
+
+/* คลาสสำหรับเปลี่ยนขอบ Input เป็นสีแดง */
+.input-error {
+    border-color: red !important;
+}
