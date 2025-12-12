@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management Dashboard</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            color: #444;
+            margin-bottom: 25px;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .user-table th, .user-table td {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .user-table th {
+            background-color: #f8f9fa;
+            color: #666;
+            font-weight: 600;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #545b62;
+        }
+
+
+        .modal-overlay {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+        }
+
+        .close-modal-icon {
+            cursor: pointer;
+            font-size: 24px;
+            color: #aaa;
+        }
+        
+        .close-modal-icon:hover {
+            color: #333;
+        }
+
+        /* --- Form Styles --- */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box; 
+        }
+
+        .modal-footer {
+            margin-top: 25px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>User Management Dashboard</h2>
+
+        <table class="user-table" id="userListTable">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                </tbody>
+        </table>
+
+        <button id="addNewUserBtn" class="btn btn-primary">+ Add New User</button>
+    </div>
+
+    <div class="modal-overlay" id="userModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New User</h3>
+                <span class="close-modal-icon close-trigger">&times;</span>
+            </div>
+
+            <form id="newUserForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="usernameInput">Username</label>
+                        <input type="text" id="usernameInput" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullnameInput">Full Name</label>
+                        <input type="text" id="fullnameInput" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailInput">Email</label>
+                        <input type="email" id="emailInput" class="form-control" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary close-trigger">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            let users = [
+                { username: 'admin', fullname: 'Kusol Mahasinananda', email: 'u6710627@au.edu' },
+            ];
+
+            function renderTable() {
+                const tableBody = $('#userListTable tbody');
+                tableBody.empty();
+
+                users.forEach(user => {
+                    const rowHtml = `
+                        <tr>
+                            <td>${user.username}</td>
+                            <td>${user.fullname}</td>
+                            <td>${user.email}</td>
+                        </tr>
+                    `;
+                    tableBody.append(rowHtml);
+                });
+            }
+
+            renderTable();
+            
+            const modal = $('#userModal');
+
+            $('#addNewUserBtn').click(function() {
+                modal.css('display', 'flex').hide().fadeIn(200); 
+            });
+
+            $('.close-trigger').click(function() {
+                modal.fadeOut(200, function(){
+                     $(this).css('display', 'none');
+                });
+            });
+
+            modal.click(function(e) {
+                if ($(e.target).hasClass('modal-overlay')) {
+                    modal.fadeOut(200, function(){
+                        $(this).css('display', 'none');
+                   });
+                }
+            });
+
+            $('#newUserForm').submit(function(e) {
+                e.preventDefault();
+
+                const newUsername = $('#usernameInput').val();
+                const newFullname = $('#fullnameInput').val();
+                const newEmail = $('#emailInput').val();
+
+
+                const newUser = {
+                    username: newUsername,
+                    fullname: newFullname,
+                    email: newEmail
+                };
+
+                users.push(newUser);
+
+                renderTable();
+                
+                $('#newUserForm')[0].reset();
+
+                modal.fadeOut(200, function(){
+                     $(this).css('display', 'none');
+                });
+
+            });
+        });
+    </script>
+</body>
+</html>
